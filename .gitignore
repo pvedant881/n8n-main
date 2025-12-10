@@ -41,3 +41,6 @@ client/src/**/*.js
 client/src/**/*.d.ts
 client/src/**/*.d.ts.map
 client/src/**/*.js.map
+
+# Uploaded files
+server/uploads
