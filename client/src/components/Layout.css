@@ -1,0 +1,22 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+}
+
+.layout-main {
+  flex: 1;
+  padding: 2rem;
+  background-color: #ecf0f1;
+}
+
+@media (max-width: 768px) {
+  .layout-main {
+    padding: 1rem;
+  }
+}

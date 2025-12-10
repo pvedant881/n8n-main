@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import authRoutes from './routes';
 
 dotenv.config();
 
@@ -33,6 +34,8 @@ app.get('/api', (req: Request, res: Response) => {
     version: '1.0.0',
   });
 });
+
+app.use(authRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response) => {

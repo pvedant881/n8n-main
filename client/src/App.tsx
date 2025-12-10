@@ -1,56 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from './store/authStore';
+import { Layout } from './components/Layout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { Dashboard } from './pages/Dashboard';
 import './App.css';
 
-interface HealthCheckResponse {
-  status: string;
-  timestamp: string;
-}
-
 function App() {
-  const [health, setHealth] = useState<HealthCheckResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { initializeAuth, isLoading } = useAuthStore();
 
   useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/health');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setHealth(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch health status');
-        setHealth(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkHealth();
+    initializeAuth();
   }, []);
 
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
+
   return (
-    <div className="App">
-      <h1>Full-Stack App</h1>
-      <div className="status-container">
-        <h2>Server Health</h2>
-        {loading && <p>Loading...</p>}
-        {error && <p className="error">Error: {error}</p>}
-        {health && (
-          <div className="health-status">
-            <p>
-              <strong>Status:</strong> {health.status}
-            </p>
-            <p>
-              <strong>Timestamp:</strong> {health.timestamp}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
